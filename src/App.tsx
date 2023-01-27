@@ -127,38 +127,14 @@ const App: React.FC = () => {
     getQueryTransport(),
   );
   const refreshOpenRpcDocument = async () => {
-    // handle .json urls
-    if (searchUrlDebounced && searchUrlDebounced.includes(".json")) {
-      const rd = await fetchUrlSchemaFile(searchUrlDebounced);
-      setDefaultValue(rd);
-      return setResults(rd);
-    }
-    try {
-      const d = await transport?.sendData({
-        internalID: 999999,
-        request: {
-          jsonrpc: "2.0",
-          params: [],
-          id: 999999,
-          method: "rpc.discover",
-        },
-      });
-      const rd = JSON.stringify(d, null, 2);
-      if (rd) {
-        setDefaultValue(rd);
-        setResults(rd);
-      }
-    } catch (e) {
-      setError(e.message);
-    }
+    const rd = await fetchUrlSchemaFile();
+    setDefaultValue(rd);
+    return setResults(rd);
   };
 
   useEffect(() => {
-    if (searchUrlDebounced && transport) {
-      refreshOpenRpcDocument();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchUrlDebounced, transport]);
+    refreshOpenRpcDocument();
+  }, []);
 
   useEffect(() => {
     if (inspectorContents) {
